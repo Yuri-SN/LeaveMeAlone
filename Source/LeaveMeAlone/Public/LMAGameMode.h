@@ -4,13 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "MyGameModeBase.generated.h"
+#include "LMAGameMode.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
-class LEAVEMEALONE_API AMyGameModeBase : public AGameModeBase
+class LEAVEMEALONE_API ALMAGameMode : public AGameModeBase
 {
-	GENERATED_BODY()	
+	GENERATED_BODY()
+
+public:
+	ALMAGameMode();
 };
