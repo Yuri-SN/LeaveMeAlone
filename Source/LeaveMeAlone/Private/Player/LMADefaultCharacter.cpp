@@ -61,6 +61,12 @@ void ALMADefaultCharacter::Tick(float DeltaTime)
 			CurrentCursor->SetWorldLocation(ResultHit.Location);
 		}
 	}
+
+	if (SpringArmComponent)
+	{
+		float CurrentArmLength = SpringArmComponent->TargetArmLength;
+		SpringArmComponent->TargetArmLength = FMath::FInterpTo(CurrentArmLength, TargetArmLength, DeltaTime, ZoomSpeed);
+	}
 }
 
 // Called to bind functionality to input
@@ -70,6 +76,8 @@ void ALMADefaultCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ALMADefaultCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ALMADefaultCharacter::MoveRight);
+
+	PlayerInputComponent->BindAxis("MouseWheelAxis", this, &ALMADefaultCharacter::ZoomCamera);
 }
 
 void ALMADefaultCharacter::MoveForward(float Value)
@@ -79,4 +87,13 @@ void ALMADefaultCharacter::MoveForward(float Value)
 void ALMADefaultCharacter::MoveRight(float Value)
 {
 	AddMovementInput(GetActorRightVector(), Value);
+}
+
+void ALMADefaultCharacter::ZoomCamera(float AxisValue)
+{
+	if (AxisValue != 0.0f)
+	{
+		TargetArmLength -= AxisValue * 50.0f;
+		TargetArmLength = FMath::Clamp(TargetArmLength, MinArmLength, MaxArmLength);
+	}
 }

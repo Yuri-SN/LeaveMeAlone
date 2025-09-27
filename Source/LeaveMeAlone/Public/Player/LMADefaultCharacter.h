@@ -37,6 +37,20 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cursor")
 	FVector CursorSize = FVector(20.0f, 40.0f, 40.0f);
 
+	// Zoom
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera Zoom", meta = (ClampMin = "300.0", ClampMax = "1400.0"))
+	float TargetArmLength = 1400.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera Zoom", meta = (ClampMin = "300.0", ClampMax = "1400.0"))
+	float MinArmLength = 400.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera Zoom", meta = (ClampMin = "300.0", ClampMax = "1400.0"))
+	float MaxArmLength = 1400.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera Zoom")
+	float ZoomSpeed = 2.0f;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -51,4 +65,6 @@ private:
 
 	void MoveForward(float Value);
 	void MoveRight(float Value);
+
+	void ZoomCamera(float AxisValue);
 };
