@@ -16,7 +16,7 @@ public:
 	ULMAHealthComponent();
 
 	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	// virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
 	float GetHealth() const { return Health; }
@@ -30,4 +30,8 @@ protected:
 
 private:
 	float Health = 0.0f;
+
+	UFUNCTION()
+	void OnTakeAnyDamage(
+		AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 };

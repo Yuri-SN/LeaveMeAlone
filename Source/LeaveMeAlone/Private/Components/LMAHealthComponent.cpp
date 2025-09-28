@@ -7,9 +7,7 @@ ULMAHealthComponent::ULMAHealthComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
 // Called when the game starts
@@ -18,12 +16,22 @@ void ULMAHealthComponent::BeginPlay()
 	Super::BeginPlay();
 
 	Health = MaxHealth;
+
+	AActor* OwnerComponent = GetOwner();
+	if (OwnerComponent)
+	{
+		OwnerComponent->OnTakeAnyDamage.AddDynamic(this, &ULMAHealthComponent::OnTakeAnyDamage);
+	}
+}
+
+void ULMAHealthComponent::OnTakeAnyDamage(
+	AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
+{
+	Health -= Damage;
 }
 
 // Called every frame
-void ULMAHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
+// void ULMAHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+// {
+//	 Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+// }
