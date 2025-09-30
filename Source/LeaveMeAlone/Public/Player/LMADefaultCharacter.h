@@ -44,6 +44,37 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
 	UAnimMontage* DeathMontage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stamina")
+	float MaxStamina = 100.0f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stamina")
+	float CurrentStamina;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stamina")
+	float StaminaDrainRate = 20.0f; // Единиц в секунду
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stamina")
+	float StaminaRegenRate = 15.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float SprintSpeed = 600.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float WalkSpeed = 300.0f;
+
+	bool bIsSprinting = false;
+	bool bCanSprint = true;
+
+	// Методы ввода
+	void StartSprint();
+	void StopSprint();
+
+	// Обновление выносливости
+	void UpdateStamina(float DeltaTime);
+
+	// Проверка возможности спринта
+	bool CanSprint() const;
+
 	virtual void BeginPlay() override;
 
 public:

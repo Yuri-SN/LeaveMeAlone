@@ -33,6 +33,9 @@ ALMADefaultCharacter::ALMADefaultCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
+
+	CurrentStamina = MaxStamina;
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }
 
 void ALMADefaultCharacter::BeginPlay()
@@ -52,10 +55,13 @@ void ALMADefaultCharacter::BeginPlay()
 void ALMADefaultCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 	if (!(HealthComponent->IsDead()))
 	{
 		RotationPlayerOnCursor();
 	}
+
+	UpdateStamina(DeltaTime);
 }
 
 void ALMADefaultCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -64,6 +70,9 @@ void ALMADefaultCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ALMADefaultCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ALMADefaultCharacter::MoveRight);
+
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ALMADefaultCharacter::StartSprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ALMADefaultCharacter::StopSprint);
 }
 
 void ALMADefaultCharacter::MoveForward(float Value)
@@ -111,4 +120,50 @@ void ALMADefaultCharacter::RotationPlayerOnCursor()
 			CurrentCursor->SetWorldLocation(ResultHit.Location);
 		}
 	}
+}
+
+void ALMADefaultCharacter::StartSprint()
+{
+	if (CanSprint())
+	{
+		bIsSprinting = true;
+		bCanSprint = true;
+		GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+	}
+}
+
+void ALMADefaultCharacter::StopSprint()
+{
+	bIsSprinting = false;
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+}
+
+void ALMADefaultCharacter::UpdateStamina(float DeltaTime)
+{
+	if (bIsSprinting)
+	{
+		CurrentStamina -= StaminaDrainRate * DeltaTime;
+		if (CurrentStamina <= 0.0f)
+		{
+			CurrentStamina = 0.0f;
+			StopSprint();
+		}
+	}
+	else
+	{
+		if (CurrentStamina < MaxStamina)
+		{
+			CurrentStamina += StaminaRegenRate * DeltaTime;
+			CurrentStamina = FMath::Min(CurrentStamina, MaxStamina);
+		}
+	}
+}
+
+bool ALMADefaultCharacter::CanSprint() const
+{
+	const bool bHasStamina = CurrentStamina > 0.0f;
+	const bool bIsMoving = GetVelocity().Size() > 0.0f;
+	const bool bIsOnGround = GetCharacterMovement()->IsMovingOnGround();
+
+	return bHasStamina && bIsMoving && bIsOnGround;
 }
