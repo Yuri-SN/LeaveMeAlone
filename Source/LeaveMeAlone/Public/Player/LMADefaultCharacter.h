@@ -51,7 +51,7 @@ protected:
 	float CurrentStamina;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stamina")
-	float StaminaDrainRate = 20.0f; // Единиц в секунду
+	float StaminaDrainRate = 20.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stamina")
 	float StaminaRegenRate = 15.0f;
@@ -65,14 +65,11 @@ protected:
 	bool bIsSprinting = false;
 	bool bCanSprint = true;
 
-	// Методы ввода
 	void StartSprint();
 	void StopSprint();
 
-	// Обновление выносливости
 	void UpdateStamina(float DeltaTime);
 
-	// Проверка возможности спринта
 	bool CanSprint() const;
 
 	virtual void BeginPlay() override;
