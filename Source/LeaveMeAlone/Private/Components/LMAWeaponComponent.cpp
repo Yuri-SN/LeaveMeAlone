@@ -4,7 +4,6 @@
 #include "Weapon/LMABaseWeapon.h"
 #include "GameFramework/Character.h"
 
-// Sets default values for this component's properties
 ULMAWeaponComponent::ULMAWeaponComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -33,5 +32,13 @@ void ULMAWeaponComponent::SpawnWeapon()
 			FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
 			Weapon->AttachToComponent(Character->GetMesh(), AttachmentRules, "r_Weapon_Socket");
 		}
+	}
+}
+
+void ULMAWeaponComponent::Fire()
+{
+	if (Weapon)
+	{
+		Weapon->Fire();
 	}
 }

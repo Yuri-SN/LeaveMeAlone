@@ -14,16 +14,20 @@ class LEAVEMEALONE_API ALMABaseWeapon : public AActor
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
 	ALMABaseWeapon();
 
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	void Fire();
 
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
 	USkeletalMeshComponent* WeaponComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	float TraceDistance = 800.0f;
+
+	virtual void BeginPlay() override;
+
+	void Shoot();
 };
