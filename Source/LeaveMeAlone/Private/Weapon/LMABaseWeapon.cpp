@@ -2,6 +2,7 @@
 
 #include "Weapon/LMABaseWeapon.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "TimerManager.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogWeapon, All, All);
 
@@ -27,6 +28,28 @@ void ALMABaseWeapon::Tick(float DeltaTime)
 
 void ALMABaseWeapon::Fire()
 {
+	Shoot();
+}
+
+void ALMABaseWeapon::StartFire()
+{
+	MakeShot();
+	GetWorldTimerManager().SetTimer(FireTimerHandle, this, &ALMABaseWeapon::MakeShot, FireRate, true);
+}
+
+void ALMABaseWeapon::StopFire()
+{
+	GetWorldTimerManager().ClearTimer(FireTimerHandle);
+}
+
+void ALMABaseWeapon::MakeShot()
+{
+	if (IsCurrentClipEmpty())
+	{
+		StopFire();
+		return;
+	}
+
 	Shoot();
 }
 
@@ -59,12 +82,18 @@ bool ALMABaseWeapon::IsCurrentClipEmpty() const
 	return CurrentAmmoWeapon.Bullets == 0;
 }
 
+bool ALMABaseWeapon::IsCurrentClipFull() const
+{
+	return CurrentAmmoWeapon.Bullets == AmmoWeapon.Bullets;
+}
+
 void ALMABaseWeapon::DecrementBullets()
 {
 	CurrentAmmoWeapon.Bullets--;
 	UE_LOG(LogWeapon, Display, TEXT("Bullets = %s"), *FString::FromInt(CurrentAmmoWeapon.Bullets));
+
 	if (IsCurrentClipEmpty())
 	{
-		ChangeClip();
+		OnClipEmpty.Broadcast();
 	}
 }

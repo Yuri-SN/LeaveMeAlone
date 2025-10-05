@@ -8,6 +8,8 @@
 
 class USkeletalMeshComponent;
 
+DECLARE_MULTICAST_DELEGATE(FOnClipEmptySignature);
+
 USTRUCT(BlueprintType)
 struct FAmmoWeapon
 {
@@ -32,7 +34,13 @@ public:
 	ALMABaseWeapon();
 
 	void Fire();
+	void StartFire();
+	void StopFire();
 	void ChangeClip();
+
+	bool IsCurrentClipFull() const;
+
+	FOnClipEmptySignature OnClipEmpty;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
@@ -43,6 +51,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	FAmmoWeapon AmmoWeapon{30, 0, true};
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	float FireRate = 0.1f;
 
 	virtual void BeginPlay() override;
 
@@ -56,4 +67,7 @@ public:
 
 private:
 	FAmmoWeapon CurrentAmmoWeapon;
+	FTimerHandle FireTimerHandle;
+
+	void MakeShot();
 };

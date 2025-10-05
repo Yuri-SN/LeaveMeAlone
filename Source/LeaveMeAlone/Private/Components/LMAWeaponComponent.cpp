@@ -34,14 +34,28 @@ void ULMAWeaponComponent::SpawnWeapon()
 			FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
 			Weapon->AttachToComponent(Character->GetMesh(), AttachmentRules, "r_Weapon_Socket");
 		}
+
+		Weapon->OnClipEmpty.AddUObject(this, &ULMAWeaponComponent::OnClipEmpty);
 	}
 }
 
 void ULMAWeaponComponent::Fire()
 {
+	bWantsToFire = true;
+
 	if (Weapon && !AnimReloading)
 	{
-		Weapon->Fire();
+		Weapon->StartFire();
+	}
+}
+
+void ULMAWeaponComponent::StopFire()
+{
+	bWantsToFire = false;
+
+	if (Weapon)
+	{
+		Weapon->StopFire();
 	}
 }
 
@@ -71,20 +85,36 @@ void ULMAWeaponComponent::OnNotifyReloadFinished(USkeletalMeshComponent* Skeleta
 	if (Character->GetMesh() == SkeletalMesh)
 	{
 		AnimReloading = false;
+
+		// Если кнопка стрельбы всё ещё нажата, возобновляем огонь
+		if (bWantsToFire && Weapon)
+		{
+			Weapon->StartFire();
+		}
 	}
+}
+
+void ULMAWeaponComponent::OnClipEmpty()
+{
+	ReloadWeapon();
 }
 
 bool ULMAWeaponComponent::CanReload() const
 {
-	return !AnimReloading;
-		//&& Weapon->CanReload();
+	return !AnimReloading && Weapon && !Weapon->IsCurrentClipFull();
 }
 
 void ULMAWeaponComponent::Reload()
 {
+	ReloadWeapon();
+}
+
+void ULMAWeaponComponent::ReloadWeapon()
+{
 	if (!CanReload())
 		return;
 
+	Weapon->StopFire();
 	Weapon->ChangeClip();
 	AnimReloading = true;
 	ACharacter* Character = Cast<ACharacter>(GetOwner());

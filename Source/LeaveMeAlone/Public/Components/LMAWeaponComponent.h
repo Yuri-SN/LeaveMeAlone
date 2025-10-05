@@ -20,6 +20,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void Fire();
+	void StopFire();
 	void Reload();
 
 protected:
@@ -36,10 +37,14 @@ private:
 	ALMABaseWeapon* Weapon = nullptr;
 
 	bool AnimReloading = false;
+	bool bWantsToFire = false;
 
 	void SpawnWeapon();
 	void InitAnimNotify();
 
 	void OnNotifyReloadFinished(USkeletalMeshComponent* SkeletalMesh);
+	void OnClipEmpty();
+
 	bool CanReload() const;
+	void ReloadWeapon();
 };
