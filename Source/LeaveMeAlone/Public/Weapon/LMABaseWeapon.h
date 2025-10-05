@@ -8,6 +8,21 @@
 
 class USkeletalMeshComponent;
 
+USTRUCT(BlueprintType)
+struct FAmmoWeapon
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	int32 Bullets;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	int32 Clips;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	bool Infinite;
+};
+
 UCLASS()
 class LEAVEMEALONE_API ALMABaseWeapon : public AActor
 {
@@ -16,9 +31,8 @@ class LEAVEMEALONE_API ALMABaseWeapon : public AActor
 public:
 	ALMABaseWeapon();
 
-	virtual void Tick(float DeltaTime) override;
-
 	void Fire();
+	void ChangeClip();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
@@ -27,7 +41,19 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	float TraceDistance = 800.0f;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	FAmmoWeapon AmmoWeapon{30, 0, true};
+
 	virtual void BeginPlay() override;
 
 	void Shoot();
+
+	bool IsCurrentClipEmpty() const;
+	void DecrementBullets();
+
+public:
+	virtual void Tick(float DeltaTime) override;
+
+private:
+	FAmmoWeapon CurrentAmmoWeapon;
 };
