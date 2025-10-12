@@ -93,7 +93,10 @@ private:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 
+	UFUNCTION()
 	void OnDeath();
+
+	UFUNCTION()
 	void OnHealthChanged(float NewHealth);
 
 	void RotationPlayerOnCursor();
